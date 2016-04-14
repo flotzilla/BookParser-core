@@ -27,9 +27,11 @@ public class FB2Parser {
         reader = new SAXReader();
     }
 
-    public void startPArse(Path file, Book book) throws DocumentException, IOException {
+    public Fb2Book startParse(Path file, Book book) throws DocumentException, IOException {
         Document doc = reader.read(file.toFile());
-        Fb2Book fb2Book = (Fb2Book) book;
+        logger.trace("Book id before creating fb2 book " + book.getId());
+        Fb2Book fb2Book = new Fb2Book(book);
+        logger.trace("Book id after creating fb2 book " + fb2Book.getId());
 
         logger.trace("Parsing " + file.getFileName());
         logger.trace("Root name " + doc.getRootElement().getName());
@@ -64,6 +66,7 @@ public class FB2Parser {
         }
 
         parseDocumentCover(doc, fb2Book);
+        return fb2Book;
     }
 
     private void parsePublishInfo(Element el_obg, Fb2Book fb2Book) {

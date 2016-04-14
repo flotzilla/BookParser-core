@@ -1,3 +1,5 @@
+import org.home.entity.Book;
+import org.home.entity.Fb2Book;
 import org.home.scanner.BookScanner;
 import org.home.scanner.ScanResults;
 import org.junit.Before;
@@ -19,9 +21,8 @@ public class TestScanResults {
     private List<Path> includedPathList;
     private List<Path> excludedPathList;
 
-    @Before
     public void init(){
-        logger.debug("Prepare test data");
+        logger.debug("Prepare pdf test data");
         includedPathList = new ArrayList<>();
         excludedPathList = new ArrayList<>();
 
@@ -33,11 +34,22 @@ public class TestScanResults {
         excludedPathList.add(Paths.get("/media/MegaHard/Book/Java_/Java train/Effective.Java.2nd.Edition.May.2008.3000th.Release.pdf"));
     }
 
+    public void fb2init(){
+        logger.debug("Prepare test data");
+        includedPathList = new ArrayList<>();
+        excludedPathList = new ArrayList<>();
+
+        includedPathList.add(Paths.get("/media/MegaHard/Book/___худ лит/Rend_Istochnik.204899.fb2"));
+        includedPathList.add(Paths.get("/media/MegaHard/Book/___худ лит/Tri tovarischa.fb2"));
+        includedPathList.add(Paths.get("/media/MegaHard/Book/___худ лит/кэррол_джим_дневники_баскетболиста_(basketball_diaries).fb2"));
+    }
+
     @Test
     public void testSuccessFullScanResult(){
         String method_name = new Object() {}.getClass().getEnclosingMethod().getName();
 
         logger.debug("Start " + method_name + " test method");
+        init();
         BookScanner bookScanner = new BookScanner(includedPathList, excludedPathList);
         ScanResults scanResults = bookScanner.scan();
 
@@ -56,6 +68,38 @@ public class TestScanResults {
         logger.debug("Asserting skipped files size counter. value " + scanResults.getIgnoredPathFileList().size());
         assertEquals(2, scanResults.getIgnoredPathFileList().size());
 
+        logger.debug("End of  " + method_name + " test method");
+
+    }
+
+    @Test
+    public void testSuccessFullScanF2b(){
+        fb2init();
+
+        String method_name = new Object() {}.getClass().getEnclosingMethod().getName();
+
+        logger.debug("Start " + method_name + " test method");
+        BookScanner bookScanner = new BookScanner(includedPathList, excludedPathList);
+        ScanResults scanResults = bookScanner.scan();
+
+        int foundfb2BooksCount = scanResults.getFoundfb2BooksCount();
+        assertEquals(3, foundfb2BooksCount);
+
+        for(Book b: scanResults.getBookList()){
+            if(b instanceof Fb2Book){
+                    Fb2Book f2book = (Fb2Book) b;
+                    logger.debug("Book is " + f2book);
+            }
+        }
+
+        Fb2Book fb2Book = new Fb2Book();
+        logger.trace("book id is " + fb2Book.getId());
+
+        Fb2Book fb2Book2 = new Fb2Book();
+        logger.trace("book id is " + fb2Book2.getId());
+
+        Book book = new Book();
+        logger.trace("book id is " + book.getId());
         logger.debug("End of  " + method_name + " test method");
 
     }

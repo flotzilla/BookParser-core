@@ -1,10 +1,15 @@
 package org.home.entity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Book {
-    private static final AtomicInteger count = new AtomicInteger(0);
+    private static final Logger logger =
+            LoggerFactory.getLogger(Fb2Book.class);
+    protected static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private String fileName;
     private Path locationPath;
@@ -38,6 +43,7 @@ public class Book {
 
     public Book() {
         id = count.incrementAndGet();
+        logger.trace("New book was created. Id: " + id);
     }
 
     public int getId() {

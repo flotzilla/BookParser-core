@@ -40,12 +40,12 @@ public class TestFB2Parser {
         bookList.add(new Fb2Book());
     }
 
-//    @Test
-//    public void testFb2(){
-//        logger.debug(bookList.get(0).getClass().getName());
-//        Fb2Book fb2Book = (Fb2Book) bookList.get(0);
-//        fb2Book.setEncoding("sss");
-//    }
+    @Test
+    public void testFb2(){
+        logger.debug(bookList.get(0).getClass().getName());
+        Fb2Book fb2Book = (Fb2Book) bookList.get(0);
+        fb2Book.setEncoding("sss");
+    }
 
     @Test
     public void testParser(){
@@ -55,7 +55,7 @@ public class TestFB2Parser {
 
         for (int i = 0; i < 3; i++) {
             try {
-                fb2Parser.startPArse(fb2FilesList.get(i), bookList.get(i));
+                fb2Parser.startParse(fb2FilesList.get(i), bookList.get(i));
             } catch (DocumentException | IOException e) {
                 logger.error(e.getMessage());
             }

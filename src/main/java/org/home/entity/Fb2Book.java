@@ -1,6 +1,11 @@
 package org.home.entity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Fb2Book extends Book {
+    private static final Logger logger =
+            LoggerFactory.getLogger(Fb2Book.class);
 
     private String encoding;
 
@@ -16,6 +21,27 @@ public class Fb2Book extends Book {
     private String srcAnnotation;
     private String srcKeywords;
     private String srcDate;
+
+    public Fb2Book(Book book) {
+        count.decrementAndGet();
+        logger.trace("Counter is " + count.get());
+
+        setId(book.getId());
+        setFileName(book.getFileName());
+        setLocationPath(book.getLocationPath());
+        setExtension(book.getExtension());
+        setSize(book.getSize());
+        setIs_deleted(book.is_deleted());
+
+        logger.trace("Fb2book id " + this.getId());
+        logger.trace("Created book id " + book.getId());
+    }
+
+    public Fb2Book() {
+        count.decrementAndGet();
+        new Fb2Book(new Book());
+        logger.trace("Fb2book id " + this.getId());
+    }
 
     public String getEncoding() {
         return encoding;

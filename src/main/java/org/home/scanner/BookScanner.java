@@ -1,6 +1,9 @@
 package org.home.scanner;
 
+import org.dom4j.DocumentException;
 import org.home.entity.Book;
+import org.home.entity.Fb2Book;
+import org.home.parsers.FB2Parser;
 import org.home.parsers.PDFParser;
 import org.home.utils.FileSize;
 import org.home.utils.PropertiesHandler;
@@ -84,6 +87,7 @@ public class BookScanner {
         Instant start = Instant.now();
         logger.debug("Starting book parser");
 
+        FB2Parser fb2Parser = new FB2Parser();
         for (Path pathItem: scanResults.getScannedPathList()){
             Book book = null;
             try {
@@ -108,6 +112,8 @@ public class BookScanner {
                                     break;
                                 case "fb2":
                                     scanResults.increaseFb2Count();
+                                    Fb2Book fb2Book = fb2Parser.startParse(pathItem, book);
+                                    scanResults.getBookList().add(fb2Book);
                                     break;
                                 case "txt":
                                     if (PropertiesHandler.getProperty("txt_is_book").equals("true")){
@@ -136,8 +142,8 @@ public class BookScanner {
                                     parseUndefinedBook(scanResults, book);
                                     break;
                             }
-                        } catch (IOException e) {
-                            logger.trace("File parsing problem" + e.getMessage());
+                        } catch (IOException | DocumentException e) {
+                            logger.error("File parsing problem" + e.getMessage());
                             parseUndefinedBook(scanResults, book);
                         }
                     }else{ //empty file
@@ -186,6 +192,7 @@ public class BookScanner {
         boolean exists = Files.exists(file, LinkOption.NOFOLLOW_LINKS);
         if(exists) {
             Book book = new Book();
+            logger.trace("New book id: " + book.getId());
             book.setIs_deleted(!exists);
             book.setLocationPath(file);
 
