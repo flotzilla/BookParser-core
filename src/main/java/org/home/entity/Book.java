@@ -28,6 +28,12 @@ public class Book {
     private String version;
     private String previewImageFile;
 
+    private String isbn;
+    private String publisherName;
+    private String publisherBookName;
+    private String publisherCity;
+    private String publishYear;
+
     private boolean is_deleted;
 
     public Book() {
@@ -191,6 +197,11 @@ public class Book {
                 ", language='" + language + '\'' +
                 ", version='" + version + '\'' +
                 ", previewImageFile='" + previewImageFile + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", publisherName='" + publisherName + '\'' +
+                ", publisherBookName='" + publisherBookName + '\'' +
+                ", publisherCity='" + publisherCity + '\'' +
+                ", publishYear='" + publishYear + '\'' +
                 ", is_deleted=" + is_deleted +
                 '}';
     }
@@ -209,5 +220,45 @@ public class Book {
 
     public void setIs_deleted(boolean is_deleted) {
         this.is_deleted = is_deleted;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getPublisherName() {
+        return publisherName;
+    }
+
+    public void setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
+    }
+
+    public String getPublisherBookName() {
+        return publisherBookName;
+    }
+
+    public void setPublisherBookName(String publisherBookName) {
+        this.publisherBookName = publisherBookName;
+    }
+
+    public String getPublisherCity() {
+        return publisherCity;
+    }
+
+    public void setPublisherCity(String publisherCity) {
+        this.publisherCity = publisherCity;
+    }
+
+    public String getPublishYear() {
+        return publishYear;
+    }
+
+    public void setPublishYear(String publishYear) {
+        this.publishYear = publishYear;
     }
 }

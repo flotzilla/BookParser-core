@@ -18,6 +18,11 @@
         <level value="INFO" />
     </logger>
 
+    <logger name="org.junit">
+        <level value="TRACE" />
+    </logger>
+
+
     <root>
         <level value="DEBUG" />
         <appender-ref ref="consoleAppender" />
