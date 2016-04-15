@@ -3,6 +3,7 @@ package org.home.scanner;
 import org.dom4j.DocumentException;
 import org.home.entity.Book;
 import org.home.entity.Fb2Book;
+import org.home.parsers.EpubParser;
 import org.home.parsers.FB2Parser;
 import org.home.parsers.PDFParser;
 import org.home.utils.FileUtils;
@@ -88,6 +89,7 @@ public class BookScanner {
         logger.debug("Starting book parser");
 
         FB2Parser fb2Parser = new FB2Parser();
+        EpubParser epubParser = new EpubParser();
         for (Path pathItem: scanResults.getScannedPathList()){
             Book book = null;
             try {
@@ -124,6 +126,9 @@ public class BookScanner {
                                     }
                                     break;
                                 case "epub":
+                                    scanResults.increaseEpubCount();
+                                    epubParser.parse(pathItem, book);
+                                    scanResults.getBookList().add(book);
                                     break;
                                 case "doc":
                                     parseDocFiles(scanResults, book);
