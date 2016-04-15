@@ -1,4 +1,4 @@
-import org.home.utils.FileSize;
+import org.home.utils.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class UtilsTest {
         //5.3 mb
         Path file = Paths.get("/media/MegaHard/Book/Java_/spring-framework-reference.4.2.4.pdf");
         try {
-            String size = FileSize.calculateFileSize(file);
+            String size = FileUtils.calculateFileSize(file);
             logger.debug("Method File size is " + size);
 
             double size1 = Files.size(file);

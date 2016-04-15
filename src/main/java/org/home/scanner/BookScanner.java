@@ -5,7 +5,7 @@ import org.home.entity.Book;
 import org.home.entity.Fb2Book;
 import org.home.parsers.FB2Parser;
 import org.home.parsers.PDFParser;
-import org.home.utils.FileSize;
+import org.home.utils.FileUtils;
 import org.home.utils.PropertiesHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +98,7 @@ public class BookScanner {
                 logger.error("Cannot find the file " + e.getMessage());
             }
             if(book != null){
-                String[] fileExtension = getFileExtension(pathItem);
+                String[] fileExtension = FileUtils.getFileExtension(pathItem);
                 book.setFileName(fileExtension[0]);
                 book.setExtension(fileExtension[1]);
                 if(!book.is_deleted()){
@@ -196,7 +196,7 @@ public class BookScanner {
             book.setIs_deleted(!exists);
             book.setLocationPath(file);
 
-            book.setSize(FileSize.calculateFileSize(file));
+            book.setSize(FileUtils.calculateFileSize(file));
 
             return book;
         }else{
@@ -288,18 +288,6 @@ public class BookScanner {
         return isContains;
     }
 
-    private static String[] getFileExtension(Path file){
-        String fileName = file.getFileName().toString();
-        String[] fileNameArray = new String[2];
 
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0){
-            fileNameArray[1] = fileName.substring(fileName.lastIndexOf(".") + 1);
-            fileNameArray[0] = fileName.substring(0, fileName.indexOf(fileNameArray[1]) - 1 );
-        }else{
-            fileNameArray[0] = fileName;
-            fileNameArray[1] =  "undefined";
-        }
-        return fileNameArray;
-    }
 
 }

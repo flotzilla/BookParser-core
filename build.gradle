@@ -14,6 +14,9 @@ jar {
 }
 
 repositories {
+    maven {
+        url "https://github.com/psiegman/mvn-repo/raw/master/releases"
+    }
     mavenCentral()
 }
 
@@ -24,6 +27,10 @@ dependencies {
            'org.slf4j:jcl-over-slf4j:1.7.7',
             'dom4j:dom4j:1.6.1'
     )
+
+    compile('nl.siegmann.epublib:epublib-core:3.1'){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
     compile('org.apache.pdfbox:pdfbox:2.0.0'){
         exclude group: 'commons-logging', module: 'commons-logging'
     }

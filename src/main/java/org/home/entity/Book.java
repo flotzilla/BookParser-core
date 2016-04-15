@@ -20,6 +20,7 @@ public class Book {
     private String author;
     private int numberOfPages;
     private String subject;
+    private String description;
 
     private String creationDate;
     private String modifDate;
@@ -31,6 +32,7 @@ public class Book {
 
     private String language;
     private String version;
+    private boolean haveCover;
     private String previewImageFile;
 
     private String isbn;
@@ -194,6 +196,7 @@ public class Book {
                 ", author='" + author + '\'' +
                 ", numberOfPages=" + numberOfPages +
                 ", subject='" + subject + '\'' +
+                ", description='" + description + '\'' +
                 ", creationDate='" + creationDate + '\'' +
                 ", modifDate='" + modifDate + '\'' +
                 ", creator='" + creator + '\'' +
@@ -202,6 +205,7 @@ public class Book {
                 ", trapped='" + trapped + '\'' +
                 ", language='" + language + '\'' +
                 ", version='" + version + '\'' +
+                ", haveCover=" + haveCover +
                 ", previewImageFile='" + previewImageFile + '\'' +
                 ", isbn='" + isbn + '\'' +
                 ", publisherName='" + publisherName + '\'' +
@@ -266,5 +270,21 @@ public class Book {
 
     public void setPublishYear(String publishYear) {
         this.publishYear = publishYear;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isHaveCover() {
+        return haveCover;
+    }
+
+    public void setHaveCover(boolean haveCover) {
+        this.haveCover = haveCover;
     }
 }

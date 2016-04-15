@@ -9,7 +9,6 @@ public class Fb2Book extends Book {
 
     private String encoding;
 
-    private boolean haveCover;
     private String annotation;
     private String genre;
 
@@ -49,14 +48,6 @@ public class Fb2Book extends Book {
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
-    }
-
-    public boolean isHaveCover() {
-        return haveCover;
-    }
-
-    public void setHaveCover(boolean haveCover) {
-        this.haveCover = haveCover;
     }
 
     public String getAnnotation() {
@@ -119,7 +110,6 @@ public class Fb2Book extends Book {
     public String toString() {
         return super.toString() + "\nFb2Book{" +
                 "encoding='" + encoding + '\'' +
-                ", haveCover=" + haveCover +
                 ", annotation='" + annotation + '\'' +
                 ", genre='" + genre + '\'' +
                 ", Translator='" + Translator + '\'' +
