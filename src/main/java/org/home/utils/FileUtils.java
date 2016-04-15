@@ -34,4 +34,22 @@ public class FileUtils {
         return fileNameArray;
     }
 
+
+    /**
+     * @param fileName that consist dash
+     * @return array first item - author name, second book name
+     */
+    public static String[] parseFileNameBydashSeparator(String fileName){
+        String[] fileNameArray = new String[2];
+        if(fileName.contains("-") && fileName.indexOf("-") != 0){
+            fileNameArray[0] = fileName.substring(fileName.indexOf("-") + 1); //author
+            fileNameArray[1] = fileName.substring(0, fileName.indexOf(fileNameArray[0]) - 1 ); //book name
+        }else{
+            fileNameArray[0] = "undefined";
+            fileNameArray[1] =  "undefined";
+        }
+
+        return fileNameArray;
+    }
+
 }

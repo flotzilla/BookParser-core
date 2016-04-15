@@ -119,6 +119,7 @@ public class BookScanner {
                                     break;
                                 case "txt":
                                     if (PropertiesHandler.getProperty("txt_is_book").equals("true")){
+                                        parseTxtFile(scanResults, book);
                                         scanResults.getBookList().add(book);
                                         scanResults.increaseTxtCount();
                                     }else{
@@ -168,6 +169,18 @@ public class BookScanner {
         logger.debug("Elapsing scan time " + parseTime);
 
         return scanResults;
+    }
+
+    private void parseTxtFile(ScanResults scanResults, Book book) {
+        if(PropertiesHandler.getProperty("dash_separator").equals("true")){
+            if(book.getFileName().contains("-")){
+                String[] strings = FileUtils.parseFileNameBydashSeparator(book.getFileName());
+                if(!strings[0].equals("undefined")){
+                    book.setAuthor(strings[0]);
+                    book.setTitle(strings[1]);
+                }
+            }
+        }
     }
 
     private void parseUndefinedBook(ScanResults scanResults, Book book) {
