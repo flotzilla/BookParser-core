@@ -107,6 +107,10 @@ public class BookScanner {
                     if(!book.getSize().equals("0")){ //if have some content
                         try {
                             switch (fileExtension[1]){
+                                /* TODO refract this to something like
+                                    if (PropertiesHandler.getProperty("extension") == pdf )
+                                      than do
+                                 */
                                 case "pdf":
                                     PDFParser.parseFileMetadata(pathItem, book);
                                     scanResults.getBookList().add(book);
@@ -131,15 +135,14 @@ public class BookScanner {
                                     epubParser.parse(pathItem, book);
                                     scanResults.getBookList().add(book);
                                     break;
-                                case "doc":
+                                case "doc": case "docx" : case "rtf":
                                     parseDocFiles(scanResults, book);
                                     scanResults.increaseDocCount();
                                     break;
-                                case "docx":
-                                    parseDocFiles(scanResults, book);
-                                    scanResults.increaseDocCount();
+                                case "cbr": case "cbz":
+                                    parseComicBook(scanResults, book);
                                     break;
-                                case "cbr":
+                                case "djvu":
                                     break;
                                 case "undefined":
                                     parseUndefinedBook(scanResults, book);
@@ -171,7 +174,12 @@ public class BookScanner {
         return scanResults;
     }
 
+    private void parseComicBook(ScanResults scanResults, Book book) {
+        //TODO implement this
+    }
+
     private void parseTxtFile(ScanResults scanResults, Book book) {
+        logger.trace("Add txt file");
         if(PropertiesHandler.getProperty("dash_separator").equals("true")){
             if(book.getFileName().contains("-")){
                 String[] strings = FileUtils.parseFileNameBydashSeparator(book.getFileName());
@@ -195,8 +203,7 @@ public class BookScanner {
     }
 
     private void parseDocFiles(ScanResults scanResults, Book book){
-        //TODO implement this
-        logger.trace("Add pdf book");
+        logger.trace("Add ms document");
         scanResults.getBookList().add(book);
     }
 
