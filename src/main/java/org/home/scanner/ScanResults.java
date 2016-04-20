@@ -3,6 +3,7 @@ package org.home.scanner;
 import org.home.entity.Book;
 
 import java.nio.file.Path;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,14 @@ import java.util.List;
 public class ScanResults {
     private List<Book> bookList;
     private List<Book> emptyBookList;
-    private List<Book> notParsedBookList;
+    private List<Book> undefinedBookList;
     private List<Path> scannedPathList;
     private List<Path> badFilesPathList;
     private List<Path> ignoredPathFileList;
     private Duration scanTime;
     private Duration parseTime;
     private Duration globalTime;
+    private long scan_id;
 
     private int foundPdfBooksCount = 0;
     private int foundEpubBooksCount = 0;
@@ -30,9 +32,18 @@ public class ScanResults {
         this.emptyBookList = new ArrayList<>();
         this.bookList = new ArrayList<>();
         this.badFilesPathList = new ArrayList<>();
-        this.notParsedBookList = new ArrayList<>();
+        this.undefinedBookList = new ArrayList<>();
         this.scannedPathList = new ArrayList<>();
         this.ignoredPathFileList = new ArrayList<>();
+    }
+
+    public void clearResults(){
+        this.emptyBookList.clear();
+        this.bookList.clear();
+        this.badFilesPathList.clear();
+        this.undefinedBookList.clear();
+        this.scannedPathList.clear();
+        this.ignoredPathFileList.clear();
     }
 
     public  void increaseTxtCount(){ foundTxtBooksCount++; }
@@ -165,12 +176,12 @@ public class ScanResults {
         this.emptyBookList = emptyBookList;
     }
 
-    public List<Book> getNotParsedBookList() {
-        return notParsedBookList;
+    public List<Book> getUndefinedBookList() {
+        return undefinedBookList;
     }
 
-    public void setNotParsedBookList(List<Book> notParsedBookList) {
-        this.notParsedBookList = notParsedBookList;
+    public void setUndefinedBookList(List<Book> undefinedBookList) {
+        this.undefinedBookList = undefinedBookList;
     }
 
     public List<Path> getBadFilesPathList() {
@@ -187,5 +198,13 @@ public class ScanResults {
 
     public void setIgnoredPathFileList(List<Path> ignoredPathFileList) {
         this.ignoredPathFileList = ignoredPathFileList;
+    }
+
+    public long getScan_id() {
+        return scan_id;
+    }
+
+    public void setScan_id(long scan_id) {
+        this.scan_id = scan_id;
     }
 }

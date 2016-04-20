@@ -1,9 +1,12 @@
 package org.home.entity;
 
+import org.home.scanner.ScanResults;
+import org.home.utils.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.sql.Timestamp;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Book {
@@ -11,6 +14,7 @@ public class Book {
             LoggerFactory.getLogger(Fb2Book.class);
     protected static final AtomicInteger count = new AtomicInteger(0);
     private int id;
+    private String scanId;
     private String fileName;
     private Path locationPath;
     private String extension;
@@ -188,6 +192,7 @@ public class Book {
     public String toString() {
         return "Book{" +
                 "id=" + id +
+                ", scanId='" + scanId + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", locationPath=" + locationPath +
                 ", extension='" + extension + '\'' +
@@ -286,5 +291,17 @@ public class Book {
 
     public void setHaveCover(boolean haveCover) {
         this.haveCover = haveCover;
+    }
+
+    public String getScanId() {
+        return scanId;
+    }
+
+    public void setScanId(long scanId) {
+        this.scanId = Session.getSessionName() + scanId + "_b" + id;
+    }
+
+    public void setScanId(String scanId) {
+        this.scanId = scanId;
     }
 }

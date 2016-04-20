@@ -31,6 +31,7 @@ public class Fb2Book extends Book {
         setExtension(book.getExtension());
         setSize(book.getSize());
         setIs_deleted(book.is_deleted());
+        setScanId(book.getScanId());
 
         logger.trace("Fb2book id " + this.getId());
         logger.trace("Created book id " + book.getId());

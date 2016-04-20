@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BookScanner {
@@ -37,6 +39,7 @@ public class BookScanner {
 
     public ScanResults scan(){
         ScanResults scanResults = new ScanResults();
+        scanResults.setScan_id(new Timestamp(new Date().getTime()).getTime());
 
         startScan(scanResults);
         parseBooks(scanResults);
@@ -103,6 +106,7 @@ public class BookScanner {
                 String[] fileExtension = FileUtils.getFileExtension(pathItem);
                 book.setFileName(fileExtension[0]);
                 book.setExtension(fileExtension[1]);
+                book.setScanId(scanResults.getScan_id());
                 if(!book.is_deleted()){
                     if(!book.getSize().equals("0")){ //if have some content
                         try {
@@ -194,7 +198,7 @@ public class BookScanner {
     private void parseUndefinedBook(ScanResults scanResults, Book book) {
         logger.trace("Cannot parse book with this extension or parser problem"
                 + book.getLocationPath().toString());
-        scanResults.getNotParsedBookList().add(book);
+        scanResults.getUndefinedBookList().add(book);
     }
 
     private void parseEmptyContentFile(ScanResults scanResults, Book book) {
