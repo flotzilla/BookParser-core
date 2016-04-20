@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScanResults {
-    private List<Book> bookList;
-    private List<Book> emptyBookList;
-    private List<Book> undefinedBookList;
-    private List<Path> scannedPathList;
-    private List<Path> badFilesPathList;
-    private List<Path> ignoredPathFileList;
+    private List<Book> bookList; //files found in search request
+    private List<Book> emptyBookList; //files that have zero size or not exists
+    private List<Book> undefinedBookList; //contains founded book files that cannot be parsed and files without needed extension
+    private List<Path> scannedPathList; //scanned dirs and files
+    private List<Path> badFilesPathList; //if file not exists or cannot be read
+    private List<Path> ignoredPathFileList; //ignored for scan files and dirs
     private Duration scanTime;
     private Duration parseTime;
     private Duration globalTime;

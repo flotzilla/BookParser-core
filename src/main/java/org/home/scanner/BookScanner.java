@@ -132,6 +132,7 @@ public class BookScanner {
                                         scanResults.increaseTxtCount();
                                     }else{
                                         logger.trace("Skip txt file " + book.getLocationPath().toString());
+                                        scanResults.getIgnoredPathFileList().add(book.getLocationPath());
                                     }
                                     break;
                                 case "epub":

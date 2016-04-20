@@ -32,7 +32,6 @@ public class Book {
     private String creator;
     private String producer;
     private String keywords;
-    private String trapped;
 
     private String language;
     private String version;
@@ -148,14 +147,6 @@ public class Book {
         this.subject = subject;
     }
 
-    public String getTrapped() {
-        return trapped;
-    }
-
-    public void setTrapped(String trapped) {
-        this.trapped = trapped;
-    }
-
     public String getModifDate() {
         return modifDate;
     }
@@ -207,7 +198,6 @@ public class Book {
                 ", creator='" + creator + '\'' +
                 ", producer='" + producer + '\'' +
                 ", keywords='" + keywords + '\'' +
-                ", trapped='" + trapped + '\'' +
                 ", language='" + language + '\'' +
                 ", version='" + version + '\'' +
                 ", haveCover=" + haveCover +

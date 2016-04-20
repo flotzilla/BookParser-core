@@ -45,7 +45,6 @@ public class PDFParser {
         book.setCreator(info.getCreator());
         book.setProducer(info.getProducer());
         book.setKeywords(info.getKeywords());
-        book.setTrapped(info.getTrapped());
 
         book.setLanguage(document.getDocumentCatalog().getLanguage());
         book.setVersion(document.getDocumentCatalog().getVersion());
