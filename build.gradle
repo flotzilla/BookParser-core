@@ -8,7 +8,7 @@ version = '0.1'
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'BookParser',
+        attributes 'Implementation-Title': 'BookParser-core',
         'Implementation-Version': version
     }
 }
