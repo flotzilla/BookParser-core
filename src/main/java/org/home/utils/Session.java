@@ -7,9 +7,11 @@ public class Session {
     private static final Logger logger =
             LoggerFactory.getLogger(Session.class);
     private static int session_id = 1;
+    private static Device device;
 
     public Session() {
         int session = -1;
+        device = new Device();
         try{
              session = Integer.parseInt(PropertiesHandler.getProperty("session"));
         }catch (NumberFormatException nfe){
@@ -31,4 +33,7 @@ public class Session {
         return "sess" + session_id + "__";
     }
 
+    public static Device getDevice() {
+        return device;
+    }
 }

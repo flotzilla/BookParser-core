@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.7.0.xsd">
+    <jdbc>
+        <driver>org.sqlite.JDBC</driver>
+        <url>jdbc:sqlite:db.sqlite</url>
+    </jdbc>
+
+    <generator>
+        <name>org.jooq.util.JavaGenerator</name>
+
+        <database>
+            <name>org.jooq.util.sqlite.SQLiteDatabase</name>
+            <includes>.*</includes>
+        </database>
+
+        <target>
+            <packageName>org.home.jooq</packageName>
+            <directory>/home/bitybite/IdeaProjects/BookParser/src/main/java</directory>
+        </target>
+    </generator>
+</configuration>

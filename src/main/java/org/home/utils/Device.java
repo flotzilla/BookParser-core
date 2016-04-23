@@ -8,13 +8,13 @@ import java.util.Properties;
 public class Device {
     public static final Logger logger =
             (ch.qos.logback.classic.Logger)  LoggerFactory.getLogger(Device.class);
-    private static String homeDir;
-    private static String userName;
-    private static String osName;
-    private static String osArch;
-    private static String osVersion;
+    private String homeDir;
+    private String userName;
+    private String osName;
+    private String osArch;
+    private String osVersion;
 
-    static {
+    public void init(){
         homeDir = System.getenv().get("HOME");
 
         Properties properties = System.getProperties();
@@ -24,23 +24,59 @@ public class Device {
         osVersion = properties.getProperty("os.version");
     }
 
-    public static String getHomeDir() {
+    @Override
+    public String toString() {
+        return "Device{" +
+                "homeDir='" + homeDir + '\'' +
+                ", userName='" + userName + '\'' +
+                ", osName='" + osName + '\'' +
+                ", osArch='" + osArch + '\'' +
+                ", osVersion='" + osVersion + '\'' +
+                '}';
+    }
+
+    public String getHomeDir() {
         return homeDir;
     }
 
-    public static String getUserName() {
+    public String getUserName() {
         return userName;
     }
 
-    public static String getOsName() {
+    public String getOsName() {
         return osName;
     }
 
-    public static String getOsArch() {
+    public String getOsArch() {
         return osArch;
     }
 
-    public static String getOsVersion() {
+    public String getOsVersion() {
         return osVersion;
+    }
+
+    public Device setHomeDir(String homeDir) {
+        this.homeDir = homeDir;
+        return this;
+    }
+
+    public Device setUserName(String userName) {
+        this.userName = userName;
+        return this;
+    }
+
+    public Device setOsName(String osName) {
+        this.osName = osName;
+        return this;
+    }
+
+    public Device setOsArch(String osArch) {
+        this.osArch = osArch;
+        return this;
+    }
+
+    public Device setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
+        return this;
     }
 }
