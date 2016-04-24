@@ -1,3 +1,4 @@
+import org.home.scanner.ScanResults;
 import org.home.utils.AbstractSession;
 import org.home.utils.DB;
 import org.home.utils.Device;
@@ -6,11 +7,14 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.*;
+import java.util.Date;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -18,6 +22,12 @@ public class TestDbConnection {
     private static final Logger logger =
             LoggerFactory.getLogger(TestDbConnection.class);
     private String db_name = "jdbc:sqlite:db.sqlite";
+    private Session session;
+
+    @Before
+    public void initSession(){
+        session = new Session();
+    }
 
 //    @Test
     public void testConnection(){
@@ -110,7 +120,7 @@ public class TestDbConnection {
         }
     }
 
-    @Test
+//    @Test
     public void TestDBGetLastSession(){
         DB db = new DB();
         try {
@@ -121,11 +131,38 @@ public class TestDbConnection {
         }
     }
 
-    @Test
+//    @Test
     public void TestInsertSession(){
         try {
             Session session = new Session();
             new DB().saveSession();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+//    @Test
+    public void testScanSaving(){
+        long time = new Timestamp(new Date().getTime()).getTime();
+        logger.debug("Time is " + String.valueOf(time));
+    }
+
+    @Test
+    public void testSaveScanResults(){
+        ScanResults scanResults = new ScanResults(
+                new Timestamp(new Date().getTime()).getTime());
+        scanResults.setFoundPdfBooksCount(5);
+        scanResults.setFoundfb2BooksCount(3);
+
+        ScanResults scanResults2 = new ScanResults(
+                new Timestamp(new Date().getTime()).getTime());
+        scanResults2.setFoundPdfBooksCount(1);
+        scanResults2.setFoundfb2BooksCount(1);
+        DB db = new DB();
+        try {
+            db.saveSession();
+            db.saveScanResults(scanResults, Session.getSessionName());
+            db.saveScanResults(scanResults2, Session.getSessionName());
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }

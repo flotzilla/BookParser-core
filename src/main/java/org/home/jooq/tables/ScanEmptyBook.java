@@ -4,6 +4,7 @@
 package org.home.jooq.tables;
 
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ScanEmptyBook extends TableImpl<ScanEmptyBookRecord> {
 
-	private static final long serialVersionUID = -703411445;
+	private static final long serialVersionUID = -1439994260;
 
 	/**
 	 * The reference instance of <code>Scan_Empty_Book</code>
@@ -50,7 +51,7 @@ public class ScanEmptyBook extends TableImpl<ScanEmptyBookRecord> {
 	/**
 	 * The column <code>Scan_Empty_Book.scan_id</code>.
 	 */
-	public final TableField<ScanEmptyBookRecord, Integer> SCAN_ID = createField("scan_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
+	public final TableField<ScanEmptyBookRecord, BigDecimal> SCAN_ID = createField("scan_id", org.jooq.impl.SQLDataType.NUMERIC, this, "");
 
 	/**
 	 * The column <code>Scan_Empty_Book.book_scan_id</code>.

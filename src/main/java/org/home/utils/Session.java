@@ -12,6 +12,7 @@ public class Session {
     public Session() {
         int session = -1;
         device = new Device();
+        device.init();
         try{
              session = Integer.parseInt(PropertiesHandler.getProperty("session"));
         }catch (NumberFormatException nfe){

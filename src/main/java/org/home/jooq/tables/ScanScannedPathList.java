@@ -4,6 +4,7 @@
 package org.home.jooq.tables;
 
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ScanScannedPathList extends TableImpl<ScanScannedPathListRecord> {
 
-	private static final long serialVersionUID = -1452025969;
+	private static final long serialVersionUID = 1416192094;
 
 	/**
 	 * The reference instance of <code>Scan_Scanned_path_list</code>
@@ -50,7 +51,7 @@ public class ScanScannedPathList extends TableImpl<ScanScannedPathListRecord> {
 	/**
 	 * The column <code>Scan_Scanned_path_list.scan_id</code>.
 	 */
-	public final TableField<ScanScannedPathListRecord, Integer> SCAN_ID = createField("scan_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
+	public final TableField<ScanScannedPathListRecord, BigDecimal> SCAN_ID = createField("scan_id", org.jooq.impl.SQLDataType.NUMERIC, this, "");
 
 	/**
 	 * The column <code>Scan_Scanned_path_list.file_path_id</code>.

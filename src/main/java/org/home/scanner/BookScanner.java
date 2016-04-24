@@ -38,9 +38,9 @@ public class BookScanner {
     }
 
     public ScanResults scan(){
-        ScanResults scanResults = new ScanResults();
-        scanResults.setScan_id(new Timestamp(new Date().getTime()).getTime());
-
+        ScanResults scanResults = new ScanResults(
+                new Timestamp(new Date().getTime()).getTime()
+        );
         startScan(scanResults);
         parseBooks(scanResults);
 

@@ -28,13 +28,15 @@ public class ScanResults {
     private int foundcbrBooksCount = 0;
     private int foundTxtBooksCount = 0;
 
-    public ScanResults() {
+    public ScanResults(long scan_id) {
         this.emptyBookList = new ArrayList<>();
         this.bookList = new ArrayList<>();
         this.badFilesPathList = new ArrayList<>();
         this.undefinedBookList = new ArrayList<>();
         this.scannedPathList = new ArrayList<>();
         this.ignoredPathFileList = new ArrayList<>();
+        this.scan_id = scan_id;
+        scanTime = parseTime = globalTime = Duration.ZERO;
     }
 
     public void clearResults(){
