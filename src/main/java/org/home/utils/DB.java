@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Objects;
+import java.util.List;
 
 public class DB {
     private static final Logger logger =
             LoggerFactory.getLogger(DB.class);
     private static String DB_NAME = "jdbc:sqlite:";
     private final int maxBatchSize = 1000;
-
+    private Connection connection = null;
 
     static {
         String sqlite_db_name = PropertiesHandler.getProperty("sqlite_db_name");
@@ -25,8 +25,6 @@ public class DB {
             DB_NAME += "db.sqlite";
         }
     }
-
-    private Connection connection = null;
 
     public static String getDbName() {
         return DB_NAME;
@@ -133,16 +131,25 @@ public class DB {
         st.setBigDecimal(2, BigDecimal.valueOf(scanResult.getScan_id()));
         st.execute();
 
-        if(scanResult.getBookList().size() > 0){
+        if (scanResult.getBookList().size() > 0) {
             saveBooks(scanResult);
             saveScanBooksId(scanResult);
+        }
+
+        if (scanResult.getEmptyBookList().size() > 0) {
+            saveEmptyBooks(scanResult);
+            saveScanEmptyBooksId(scanResult);
+        }
+
+        if (scanResult.getUndefinedBookList().size() > 0) {
+            saveUndefinedBooks(scanResult);
+            saveUndefinedBooksId(scanResult);
         }
 
         disconnect();
     }
 
     private void saveBooks(ScanResults scanResults) throws SQLException {
-        int counter = 0;
         String sql = "INSERT into \"Book\" " +
                 "(scan_id, id, file_name, location_path, ext, file_size, title, author, number_of_pages, subject, " +
                 "description, creation_date, modification_date, creator, producer, keywords, lang, version," +
@@ -152,7 +159,92 @@ public class DB {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
                 "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = connection.prepareStatement(sql);
-        for(Book b: scanResults.getBookList()){
+        prepareBookStatement(ps, scanResults.getBookList());
+        ps.executeBatch();
+    }
+
+    private void saveScanBooksId(ScanResults scanResults) throws SQLException {
+        String scanBookSql = "INSERT INTO \"Scan_Book\" " +
+                "(scan_id, book_scan_id)  VALUES(?, ?)";
+        PreparedStatement st = connection.prepareStatement(scanBookSql);
+        int counter = 0;
+        for (Book b : scanResults.getBookList()) {
+            st.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
+            st.setString(2, b.getScanId());
+            st.addBatch();
+            if (++counter % maxBatchSize == 0) {
+                st.executeBatch();
+            }
+        }
+        st.executeBatch();
+        st.close();
+    }
+
+    private void saveEmptyBooks(ScanResults scanResults) throws SQLException {
+        String sql = "INSERT into \"Empty_book\" " +
+                "(scan_id, id, file_name, location_path, ext, file_size, title, author, number_of_pages, subject, " +
+                "description, creation_date, modification_date, creator, producer, keywords, lang, version," +
+                " have_cover, preview_image_file, isbn, publisher_name, publisher_book_name, publisher_city, " +
+                "publish_year, is_deleted, encoding, annotaion, genre, translator, src_lang, src_genre, src_author, " +
+                "src_title, src_annotation, src_keywords, src_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
+                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        prepareBookStatement(ps, scanResults.getEmptyBookList());
+        ps.executeBatch();
+    }
+
+    private void saveScanEmptyBooksId(ScanResults scanResults) throws SQLException {
+        String scanBookSql = "INSERT INTO \"Scan_Empty_Book\" " +
+                "(scan_id, book_scan_id)  VALUES(?, ?)";
+        PreparedStatement st = connection.prepareStatement(scanBookSql);
+        int counter = 0;
+        for (Book b : scanResults.getEmptyBookList()) {
+            st.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
+            st.setString(2, b.getScanId());
+            st.addBatch();
+            if (++counter % maxBatchSize == 0) {
+                st.executeBatch();
+            }
+        }
+        st.executeBatch();
+        st.close();
+    }
+
+    private void saveUndefinedBooks(ScanResults scanResults) throws SQLException {
+        String sql = "INSERT into \"Undefined_book\" " +
+                "(scan_id, id, file_name, location_path, ext, file_size, title, author, number_of_pages, subject, " +
+                "description, creation_date, modification_date, creator, producer, keywords, lang, version," +
+                " have_cover, preview_image_file, isbn, publisher_name, publisher_book_name, publisher_city, " +
+                "publish_year, is_deleted, encoding, annotaion, genre, translator, src_lang, src_genre, src_author, " +
+                "src_title, src_annotation, src_keywords, src_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
+                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        prepareBookStatement(ps, scanResults.getUndefinedBookList());
+        ps.executeBatch();
+    }
+
+    private void saveUndefinedBooksId(ScanResults scanResults) throws SQLException {
+        String scanBookSql = "INSERT INTO \"Scan_Undefined_Book\" " +
+                "(scan_id, book_scan_id)  VALUES(?, ?)";
+        PreparedStatement st = connection.prepareStatement(scanBookSql);
+        int counter = 0;
+        for (Book b : scanResults.getUndefinedBookList()) {
+            st.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
+            st.setString(2, b.getScanId());
+            st.addBatch();
+            if (++counter % maxBatchSize == 0) {
+                st.executeBatch();
+            }
+        }
+        st.executeBatch();
+        st.close();
+    }
+
+    private void prepareBookStatement(PreparedStatement ps, List<Book> bookList) throws SQLException {
+        int counter = 0;
+        for (Book b : bookList) {
             ps.setString(1, b.getScanId());
             ps.setInt(2, b.getId());
             ps.setString(3, b.getFileName());
@@ -180,10 +272,7 @@ public class DB {
             ps.setString(25, b.getPublishYear());
             ps.setBoolean(26, b.is_deleted());
 
-            logger.trace("ClassName: " + b.getClass().getName());
-            logger.trace("Instance pf fb2" + b.getClass().equals(Fb2Book.class));
-            logger.trace("FileName: " + b.getFileName() + " ext: " + b.getExtension());
-            if(b.getClass().equals(Fb2Book.class)){
+            if (b.getClass().equals(Fb2Book.class)) {
                 logger.debug("Saving fb2 book");
                 Fb2Book fb2book = (Fb2Book) b;
                 ps.setString(27, fb2book.getEncoding());
@@ -197,8 +286,8 @@ public class DB {
                 ps.setString(35, fb2book.getSrcAnnotation());
                 ps.setString(36, fb2book.getSrcKeywords());
                 ps.setString(37, fb2book.getSrcDate());
-            }else{
-                logger.trace("SAving pdf book");
+            } else {
+                logger.trace("Saving empty pdf book");
                 ps.setString(27, "none");
                 ps.setString(28, "none");
                 ps.setString(29, "none");
@@ -212,35 +301,59 @@ public class DB {
                 ps.setString(37, "none");
             }
             ps.addBatch();
-            if(++counter % maxBatchSize == 0){
+            if (++counter % maxBatchSize == 0) {
                 ps.executeBatch();
             }
         }
-        ps.executeBatch();
     }
 
-    private void saveScanBooksId(ScanResults scanResults) throws SQLException {
-        String scanBookSql = "INSERT INTO \"Scan_Book\" " +
-                "(scan_id, book_scan_id)  VALUES(?, ?)";
-        PreparedStatement st = connection.prepareStatement(scanBookSql);
-        int counter = 0;
-        for(Book b: scanResults.getBookList()){
-            st.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
-            st.setString(2, b.getScanId());
-            st.addBatch();
-            if(++counter % maxBatchSize == 0){
-                st.executeBatch();
-            }
+    public int getBookSize() throws SQLException {
+        int bookSize;
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT COUNT(*) AS rowcount from \"Book\"");
+        if (resultSet.next()) {
+            bookSize = resultSet.getInt("rowcount");
+        } else {
+            bookSize = 0;
         }
-        st.executeBatch();
-        st.close();
+        statement.close();
+        disconnect();
+        return bookSize;
     }
 
-    private void saveEmpyBooks(ScanResults scanResults) {
+    public int getEmptyBookSize() throws SQLException {
+        int bookSize;
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT COUNT(*) AS rowcount from \"Empty_book\"");
+        if (resultSet.next()) {
+            bookSize = resultSet.getInt("rowcount");
+        } else {
+            bookSize = 0;
+        }
+        statement.close();
+        disconnect();
+        return bookSize;
     }
 
-    private void saveUndefinedBooks(ScanResults scanResults) {
+    public int getUndefinedBookSize() throws SQLException {
+        int bookSize;
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT COUNT(*) AS rowcount from \"Undefined_book\"");
+        if (resultSet.next()) {
+            bookSize = resultSet.getInt("rowcount");
+        } else {
+            bookSize = 0;
+        }
+        statement.close();
+        disconnect();
+        return bookSize;
     }
 
-//    private void saveScannedPath
+
 }

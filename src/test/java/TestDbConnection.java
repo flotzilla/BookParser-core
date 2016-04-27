@@ -4,14 +4,14 @@ import org.home.scanner.ScanResults;
 import org.home.utils.AbstractSession;
 import org.home.utils.DB;
 import org.home.utils.Session;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,16 +21,18 @@ public class TestDbConnection {
             LoggerFactory.getLogger(TestDbConnection.class);
     private String db_name = "jdbc:sqlite:db.sqlite";
     private Session session;
-    private List<Book> books;
+    private List<Book> undefinedBookList;
+    private List<Book> emptyBookList;
+    private List<Book> bookList;
 
     @Before
     public void initSession() {
         session = new Session();
     }
 
-    public void initListOfbooks(ScanResults scanResults){
-        books = new ArrayList<>(10);
-        for(int i = 0; i< 10; i++){
+    public void initListOfBooks(ScanResults scanResults, int size){
+        bookList = new ArrayList<>();
+        for(int i = 0; i< size; i++){
             if(i % 2 == 0){
                 Book book = new Book();
                 book.setExtension("pdf");
@@ -41,7 +43,7 @@ public class TestDbConnection {
                 book.setIs_deleted(false);
                 book.setNumberOfPages(30);
                 book.setSize("1Mb");
-                books.add(book);
+                bookList.add(book);
             }else{
                 Fb2Book book = new Fb2Book();
                 book.setExtension("fb2");
@@ -52,12 +54,75 @@ public class TestDbConnection {
                 book.setIs_deleted(false);
                 book.setNumberOfPages(30);
                 book.setSize("1Mb");
-                books.add(book);
+                bookList.add(book);
                 logger.debug("Fb2 book instance");
             }
 
         }
     }
+
+    public void initUndefinedBooks(ScanResults scanResults, int size){
+        undefinedBookList = new ArrayList<>();
+        for(int i = 0; i< size; i++){
+            if(i % 2 == 0){
+                Book book = new Book();
+                book.setExtension("pdf");
+                logger.debug("Book instance");
+                book.setFileName("undefined_book" + i);
+                book.setScanId(scanResults.getScan_id());
+                book.setLocationPath(Paths.get("/some/file/path" + i));
+                book.setIs_deleted(false);
+                book.setNumberOfPages(30);
+                book.setSize("1Mb");
+                undefinedBookList.add(book);
+            }else{
+                Fb2Book book = new Fb2Book();
+                book.setExtension("fb2");
+                book.setEncoding("urf-8");
+                book.setFileName("undefined_book" + i);
+                book.setScanId(scanResults.getScan_id());
+                book.setLocationPath(Paths.get("/some/file/path" + i));
+                book.setIs_deleted(false);
+                book.setNumberOfPages(30);
+                book.setSize("1Mb");
+                undefinedBookList.add(book);
+                logger.debug("Fb2 book instance");
+            }
+
+        }
+    }
+
+    public void initEmptyBooks(ScanResults scanResults, int size){
+        emptyBookList = new ArrayList<>();
+        for(int i = 0; i< size; i++){
+            if(i % 2 == 0){
+                Book book = new Book();
+                book.setExtension("pdf");
+                logger.debug("Book instance");
+                book.setFileName("empty book" + i);
+                book.setScanId(scanResults.getScan_id());
+                book.setLocationPath(Paths.get("/some/file/path" + i));
+                book.setIs_deleted(false);
+                book.setNumberOfPages(30);
+                book.setSize("1Mb");
+                emptyBookList.add(book);
+            }else{
+                Fb2Book book = new Fb2Book();
+                book.setExtension("fb2");
+                book.setEncoding("urf-8");
+                book.setFileName("empty book" + i);
+                book.setScanId(scanResults.getScan_id());
+                book.setLocationPath(Paths.get("/some/file/path" + i));
+                book.setIs_deleted(false);
+                book.setNumberOfPages(30);
+                book.setSize("1Mb");
+                emptyBookList.add(book);
+                logger.debug("Fb2 book instance");
+            }
+
+        }
+    }
+
 
     //    @Test
     public void TestDBGetLastSession() {
@@ -91,21 +156,33 @@ public class TestDbConnection {
                 new Timestamp(new Date().getTime()).getTime());
         scanResults.setFoundPdfBooksCount(5);
         scanResults.setFoundfb2BooksCount(5);
-        initListOfbooks(scanResults);
-        scanResults.setBookList(books);
+        initListOfBooks(scanResults, 10);
+        initEmptyBooks(scanResults,5);
+        initUndefinedBooks(scanResults, 5);
+        scanResults.setBookList(bookList);
+        scanResults.setUndefinedBookList(undefinedBookList);
+        scanResults.setEmptyBookList(emptyBookList);
 
         DB db = new DB();
         try {
+            int booksSizeBefore = db.getBookSize();
+            int emptyBooksSizeBefore = db.getEmptyBookSize();
+            int undefinedBooksSizeBefore = db.getUndefinedBookSize();
+
             db.saveSession();
             db.saveScanResults(scanResults, Session.getSessionName());
+
+            int booksSizeAfter = db.getBookSize();
+            int emptyBooksSizeAfter = db.getEmptyBookSize();
+            int undefinedBooksSizeAfter= db.getUndefinedBookSize();
+
+            Assert.assertEquals(booksSizeBefore + 10, booksSizeAfter);
+            Assert.assertEquals(emptyBooksSizeBefore + 5, emptyBooksSizeAfter);
+            Assert.assertEquals(undefinedBooksSizeBefore + 5, undefinedBooksSizeAfter);
+
         } catch (SQLException e) {
             logger.error(e.getMessage() + e.getErrorCode());
             e.printStackTrace();
         }
-    }
-
-    @Test
-    public void testBookScanId(){
-
     }
 }
