@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScanResults {
-    private List<Book> bookList; //files found in search request
+    private List<Book> bookList; //books that have been founded in search request
     private List<Book> emptyBookList; //files that have zero size or not exists
     private List<Book> undefinedBookList; //contains founded book files that cannot be parsed and files without needed extension
     private List<Path> scannedPathList; //scanned dirs and files

@@ -1,18 +1,16 @@
 package org.home.entity;
 
-import org.home.scanner.ScanResults;
 import org.home.utils.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.sql.Timestamp;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Book {
+    protected static final AtomicInteger count = new AtomicInteger(0);
     private static final Logger logger =
             LoggerFactory.getLogger(Fb2Book.class);
-    protected static final AtomicInteger count = new AtomicInteger(0);
     private int id;
     private String scanId;
     private String fileName;
@@ -287,11 +285,11 @@ public class Book {
         return scanId;
     }
 
-    public void setScanId(long scanId) {
-        this.scanId = Session.getSessionName() + scanId + "_b" + id;
-    }
-
     public void setScanId(String scanId) {
         this.scanId = scanId;
+    }
+
+    public void setScanId(long scanId) {
+        this.scanId = Session.getSessionName() + scanId + "_b" + id;
     }
 }
