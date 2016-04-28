@@ -4,22 +4,27 @@ import org.home.scanner.ScanResults;
 import org.home.utils.AbstractSession;
 import org.home.utils.DB;
 import org.home.utils.Session;
+import org.home.utils.Utils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import ch.qos.logback.classic.Logger;
 
 public class TestDbConnection {
     private static final Logger logger =
-            LoggerFactory.getLogger(TestDbConnection.class);
+            (Logger) LoggerFactory.getLogger(TestDbConnection.class);
     private String db_name = "jdbc:sqlite:db.sqlite";
     private Session session;
     private List<Book> undefinedBookList;
@@ -214,7 +219,7 @@ public class TestDbConnection {
         }
     }
 
-    @Test
+//    @Test
     public void testSaveScanResultsPath(){
         ScanResults scanResults = new ScanResults(
                 new Timestamp(new Date().getTime()).getTime());
@@ -229,6 +234,17 @@ public class TestDbConnection {
         try {
             db.saveSession();
             db.saveScanResults(scanResults, Session.getSessionName());
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
+    }
+
+    @Test
+    public void testGetScanResults(){
+        DB db = new DB();
+        try {
+            ScanResults scanResult = db.getScanResult(Long.valueOf("1461731856555"));
+            logger.debug(scanResult.toString());
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }

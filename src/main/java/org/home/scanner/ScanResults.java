@@ -29,13 +29,21 @@ public class ScanResults {
     private int foundTxtBooksCount = 0;
 
     public ScanResults(long scan_id) {
+        this.scan_id = scan_id;
+        init();
+    }
+
+    public ScanResults(){
+        init();
+    }
+
+    private void init(){
         this.emptyBookList = new ArrayList<>();
         this.bookList = new ArrayList<>();
         this.badFilesPathList = new ArrayList<>();
         this.undefinedBookList = new ArrayList<>();
         this.scannedPathList = new ArrayList<>();
         this.ignoredPathFileList = new ArrayList<>();
-        this.scan_id = scan_id;
         scanTime = parseTime = globalTime = Duration.ZERO;
     }
 
@@ -208,5 +216,22 @@ public class ScanResults {
 
     public void setScan_id(long scan_id) {
         this.scan_id = scan_id;
+    }
+
+    @Override
+    public String toString() {
+        return "ScanResults{" +
+                " scan_id=" + scan_id +
+                ", scanTime=" + scanTime +
+                ", parseTime=" + parseTime +
+                ", globalTime=" + globalTime +
+                ", foundPdfBooksCount=" + foundPdfBooksCount +
+                ", foundEpubBooksCount=" + foundEpubBooksCount +
+                ", foundfb2BooksCount=" + foundfb2BooksCount +
+                ", foundDjvuBooksCount=" + foundDjvuBooksCount +
+                ", foundDocBooksCount=" + foundDocBooksCount +
+                ", foundcbrBooksCount=" + foundcbrBooksCount +
+                ", foundTxtBooksCount=" + foundTxtBooksCount +
+                '}';
     }
 }

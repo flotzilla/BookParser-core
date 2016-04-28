@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DB {
@@ -173,7 +174,7 @@ public class DB {
                 "(session_name, scan_id) VALUES(?, ?)";
         st = connection.prepareStatement(session_scan_sql);
         st.setString(1, session_name);
-        st.setBigDecimal(2, BigDecimal.valueOf(scanResult.getScan_id()));
+        st.setLong(2, scanResult.getScan_id());
         st.execute();
 
         if (scanResult.getBookList().size() > 0) {
@@ -221,6 +222,32 @@ public class DB {
         PreparedStatement ps = connection.prepareStatement(sql);
         prepareBookStatement(ps, scanResults.getBookList());
         ps.executeBatch();
+    }
+
+    public ScanResults getScanResult(long scan_id) throws SQLException {
+        ScanResults scanResults = new ScanResults();
+
+        String sql = "SELECT * from \"ScanResult\" WHERE " +
+                "scan_id = ?";
+        connect();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setLong(1, scan_id);
+        ResultSet resultSet = statement.executeQuery();
+
+        logger.trace("Fetch size: " + resultSet.getFetchSize());
+            while(resultSet.next()){
+                scanResults.setScan_id(scan_id);
+                scanResults.setFoundPdfBooksCount(resultSet.getInt("pdf_books_count"));
+                scanResults.setFoundfb2BooksCount(resultSet.getInt("fb2_books_count"));
+                scanResults.setFoundEpubBooksCount(resultSet.getInt("epub_books_count"));
+                scanResults.setFoundDjvuBooksCount(resultSet.getInt("djvu_books_count"));
+                scanResults.setFoundTxtBooksCount(resultSet.getInt("txt_books_count"));
+                scanResults.setFoundDocBooksCount(resultSet.getInt("doc_books_count"));
+                scanResults.setFoundcbrBooksCount(resultSet.getInt("cbr_books_count"));
+            }
+        connection.close();
+        disconnect();
+        return scanResults;
     }
 
     private void saveScanBooksId(ScanResults scanResults) throws SQLException {
@@ -480,6 +507,24 @@ public class DB {
 
         statement.executeBatch();
     }
+
+    private List<Book> getScanBooksList(long scanId) throws SQLException {
+        List<Book> books = new ArrayList<>();
+//
+//        String sql = "SELECT From ";
+//        PreparedStatement statement = connection.prepareStatement(sql);
+        return books;
+    }
+
+    private void getScanEmptyBooksList(long scanId){}
+
+    private void getScanUndefinedBooksList(long scanId){}
+
+    private void getScanPathList(long scanId){}
+
+    private void getScanBadFilesList(long scanId){}
+
+    private void getScanIgnoredFilesList(long scanId){}
 
 
 }
