@@ -10,9 +10,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -214,7 +216,7 @@ public class TestDbConnection {
         }
     }
 
-    @Test
+//    @Test
     public void testSaveScanResultsPath(){
         ScanResults scanResults = new ScanResults(
                 new Timestamp(new Date().getTime()).getTime());
@@ -229,6 +231,16 @@ public class TestDbConnection {
         try {
             db.saveSession();
             db.saveScanResults(scanResults, Session.getSessionName());
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetScanResults(){
+        DB db = new DB();
+        try {
+            db.getScanResult(Long.valueOf("1461731856555"));
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
