@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.List;
 
@@ -30,12 +31,12 @@ public class DB {
         return DB_NAME;
     }
 
-    private Connection connect() throws SQLException {
+    public Connection connect() throws SQLException {
         connection = DriverManager.getConnection(DB_NAME);
         return connection;
     }
 
-    private void disconnect() throws SQLException {
+    public void disconnect() throws SQLException {
         if (connection != null) {
             try {
                 connection.close();
@@ -47,8 +48,52 @@ public class DB {
         }
     }
 
-    public Connection getConnection() {
-        return connection;
+    public int getBookSize() throws SQLException {
+        int bookSize;
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT COUNT(*) AS rowcount from \"Book\"");
+        if (resultSet.next()) {
+            bookSize = resultSet.getInt("rowcount");
+        } else {
+            bookSize = 0;
+        }
+        statement.close();
+        disconnect();
+        return bookSize;
+    }
+
+    public int getEmptyBookSize() throws SQLException {
+        int bookSize;
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT COUNT(*) AS rowcount from \"Empty_book\"");
+        if (resultSet.next()) {
+            bookSize = resultSet.getInt("rowcount");
+        } else {
+            bookSize = 0;
+        }
+        statement.close();
+        disconnect();
+        return bookSize;
+    }
+
+    public int getUndefinedBookSize() throws SQLException {
+        int bookSize;
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT COUNT(*) AS rowcount from \"Undefined_book\"");
+        if (resultSet.next()) {
+            bookSize = resultSet.getInt("rowcount");
+        } else {
+            bookSize = 0;
+        }
+        statement.close();
+        disconnect();
+        return bookSize;
     }
 
     public AbstractSession getLastSession() throws SQLException {
@@ -144,6 +189,21 @@ public class DB {
         if (scanResult.getUndefinedBookList().size() > 0) {
             saveUndefinedBooks(scanResult);
             saveUndefinedBooksId(scanResult);
+        }
+
+        if(scanResult.getScannedPathList().size() > 0){
+            saveScanPathList(scanResult);
+            saveScanPathListIds(scanResult);
+        }
+
+        if(scanResult.getBadFilesPathList().size() > 0){
+            saveBadFilesPathList(scanResult);
+            saveBadFilesPathListIds(scanResult);
+        }
+
+        if(scanResult.getIgnoredPathFileList().size() > 0){
+            saveIgnoredPathList(scanResult);
+            saveIgnoredPathListIds(scanResult);
         }
 
         disconnect();
@@ -307,52 +367,118 @@ public class DB {
         }
     }
 
-    public int getBookSize() throws SQLException {
-        int bookSize;
-        connect();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(
-                "SELECT COUNT(*) AS rowcount from \"Book\"");
-        if (resultSet.next()) {
-            bookSize = resultSet.getInt("rowcount");
-        } else {
-            bookSize = 0;
+    private void saveScanPathList(ScanResults scanResults) throws SQLException {
+     String sql = "Insert INTO  \"Scanned_path_list\" " +
+             "(id, file_path) VALUES (?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        int counter = 0;
+        for(Path p :scanResults.getScannedPathList()){
+            statement.setString(1, scanResults.getScan_id() + "__f" + ++counter);
+            statement.setString(2, p.toAbsolutePath().toString());
+            statement.addBatch();
+
+            if(counter % maxBatchSize ==0){
+                statement.executeBatch();
+            }
         }
-        statement.close();
-        disconnect();
-        return bookSize;
+
+        statement.executeBatch();
     }
 
-    public int getEmptyBookSize() throws SQLException {
-        int bookSize;
-        connect();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(
-                "SELECT COUNT(*) AS rowcount from \"Empty_book\"");
-        if (resultSet.next()) {
-            bookSize = resultSet.getInt("rowcount");
-        } else {
-            bookSize = 0;
+    private void saveScanPathListIds(ScanResults scanResults) throws SQLException {
+        String sql = "Insert INTO  \"Scan_Scanned_path_list\" " +
+                "(scan_id, file_path_id)  VALUES (?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        int counter = 0;
+        for(Path p :scanResults.getScannedPathList()){
+            statement.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
+            statement.setString(2, scanResults.getScan_id() + "__f" + ++counter);
+            statement.addBatch();
+
+            if(counter % maxBatchSize ==0){
+                statement.executeBatch();
+            }
         }
-        statement.close();
-        disconnect();
-        return bookSize;
+
+        statement.executeBatch();
     }
 
-    public int getUndefinedBookSize() throws SQLException {
-        int bookSize;
-        connect();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(
-                "SELECT COUNT(*) AS rowcount from \"Undefined_book\"");
-        if (resultSet.next()) {
-            bookSize = resultSet.getInt("rowcount");
-        } else {
-            bookSize = 0;
+    private void saveIgnoredPathList(ScanResults scanResults) throws SQLException {
+        String sql = "Insert INTO  \"ignored_path_list\" " +
+                "(id, file_path) VALUES (?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        int counter = 0;
+        for(Path p :scanResults.getIgnoredPathFileList()){
+            statement.setString(1, scanResults.getScan_id() + "__f" + ++counter);
+            statement.setString(2, p.toAbsolutePath().toString());
+            statement.addBatch();
+
+            if(counter % maxBatchSize ==0){
+                statement.executeBatch();
+            }
         }
-        statement.close();
-        disconnect();
-        return bookSize;
+
+        statement.executeBatch();
+    }
+
+    private void saveIgnoredPathListIds(ScanResults scanResults) throws SQLException {
+        String sql = "Insert INTO  \"Scan_Ignored_path_list\" " +
+                "(scan_id, file_path_id)  VALUES (?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        int counter = 0;
+        for(Path p :scanResults.getIgnoredPathFileList()){
+            statement.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
+            statement.setString(2, scanResults.getScan_id() + "__f" + ++counter);
+            statement.addBatch();
+
+            if(counter % maxBatchSize ==0){
+                statement.executeBatch();
+            }
+        }
+
+        statement.executeBatch();
+    }
+
+    private void saveBadFilesPathList(ScanResults scanResults) throws SQLException {
+        String sql = "Insert INTO  \"Bad_files_path_list\" " +
+                "(id, file_path) VALUES (?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        int counter = 0;
+        for(Path p :scanResults.getBadFilesPathList()){
+            statement.setString(1, scanResults.getScan_id() + "__f" + ++counter);
+            statement.setString(2, p.toAbsolutePath().toString());
+            statement.addBatch();
+
+            if(counter % maxBatchSize ==0){
+                statement.executeBatch();
+            }
+        }
+
+        statement.executeBatch();
+    }
+
+    private void saveBadFilesPathListIds(ScanResults scanResults) throws SQLException {
+        String sql = "Insert INTO  \"Scan_Bad_files_path_list\" " +
+                "(scan_id, file_path_id)  VALUES (?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(sql);
+        int counter = 0;
+        for(Path p :scanResults.getBadFilesPathList()){
+            statement.setBigDecimal(1, BigDecimal.valueOf(scanResults.getScan_id()));
+            statement.setString(2, scanResults.getScan_id() + "__f" + ++counter);
+            statement.addBatch();
+
+            if(counter % maxBatchSize ==0){
+                statement.executeBatch();
+            }
+        }
+
+        statement.executeBatch();
     }
 
 

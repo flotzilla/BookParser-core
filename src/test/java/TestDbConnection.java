@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class TestDbConnection {
     private List<Book> undefinedBookList;
     private List<Book> emptyBookList;
     private List<Book> bookList;
+    private List<Path> scannedPathList;
+    private List<Path> ignoredPathList;
+    private List<Path> badPathList;
 
     @Before
     public void initSession() {
@@ -123,6 +127,30 @@ public class TestDbConnection {
         }
     }
 
+    public void initScannedFilesList(ScanResults scanResults, int size){
+        scannedPathList = new ArrayList<>();
+        for(int i=0; i< size; i++){
+            scannedPathList.add(Paths.get("file" + i));
+        }
+        scanResults.setScannedPathList(scannedPathList);
+    }
+
+    public void initIgnoredFilesList(ScanResults scanResults, int size){
+        ignoredPathList= new ArrayList<>();
+        for(int i=0; i< size; i++){
+            ignoredPathList.add(Paths.get("file" + i));
+        }
+        scanResults.setIgnoredPathFileList(ignoredPathList);
+    }
+
+    public void initBadFilesList(ScanResults scanResults, int size){
+        badPathList= new ArrayList<>();
+        for(int i=0; i< size; i++){
+            badPathList.add(Paths.get("file" + i));
+        }
+        scanResults.setBadFilesPathList(badPathList);
+    }
+
 
     //    @Test
     public void TestDBGetLastSession() {
@@ -150,7 +178,7 @@ public class TestDbConnection {
         logger.debug("Time is " + String.valueOf(time));
     }
 
-    @Test
+//    @Test
     public void testSaveScanResults(){
         ScanResults scanResults = new ScanResults(
                 new Timestamp(new Date().getTime()).getTime());
@@ -183,6 +211,26 @@ public class TestDbConnection {
         } catch (SQLException e) {
             logger.error(e.getMessage() + e.getErrorCode());
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testSaveScanResultsPath(){
+        ScanResults scanResults = new ScanResults(
+                new Timestamp(new Date().getTime()).getTime());
+        initScannedFilesList(scanResults,10);
+        initBadFilesList(scanResults,5);
+        initIgnoredFilesList(scanResults,2);
+
+        logger.debug("Session name" + Session.getSessionName());
+        logger.debug("Scan id" + scanResults.getScan_id());
+
+        DB db = new DB();
+        try {
+            db.saveSession();
+            db.saveScanResults(scanResults, Session.getSessionName());
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
         }
     }
 }
