@@ -251,11 +251,43 @@ public class TestDbConnection {
         }
     }
 
-    @Test
-    public void testGetScanBookList() throws ParseException, SQLException {
+//    @Test
+    public void testGetScanBookList() {
         DB db = new DB();
-        List<Book> scanBooksList = db.getScanBooksList(Long.valueOf("1461738825600"), true);
-        logger.debug("Books size" + scanBooksList.size());
-        scanBooksList.forEach(book -> logger.debug(book.toString()));
+        List<Book> scanBooksList = null;
+        try {
+            scanBooksList = db.getScanBooksList(Long.valueOf("1461738825600"), true);
+            logger.debug("Books size" + scanBooksList.size());
+            scanBooksList.forEach(book -> logger.debug(book.toString()));
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
+
+    }
+
+    @Test
+    public void testGetUndefinedBooksList() {
+        DB db = new DB();
+        List<Book> scanUndefinedBooksList = null;
+        try {
+            scanUndefinedBooksList = db.getScanUndefinedBooksList(Long.valueOf("1461738825600"), true);
+            logger.debug("Undefined Books size " + scanUndefinedBooksList.size());
+            scanUndefinedBooksList.forEach(book -> logger.debug(book.toString()));
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
+
+    }
+
+    @Test
+    public void testGeEmptyBooksList(){
+        DB db = new DB();
+        try {
+            List<Book> scanEmptyBooksList = db.getScanEmptyBooksList(Long.valueOf("1461738825600"), true);
+            logger.debug("Empty Books Size " + scanEmptyBooksList.size());
+            scanEmptyBooksList.forEach(book -> logger.debug(book.toString()));
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
     }
 }

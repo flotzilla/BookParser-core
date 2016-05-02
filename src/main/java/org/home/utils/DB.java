@@ -568,9 +568,7 @@ public class DB {
         st.setLong(1, scanId);
         ResultSet rs = st.executeQuery();
 
-        int counter = 0;
         while (rs.next()){
-            ++counter;
            books.add(readBookFromResultSet(rs));
         }
 
@@ -580,11 +578,49 @@ public class DB {
         return books;
     }
 
-    private void getScanEmptyBooksList(long scanId){
+    public List<Book> getScanEmptyBooksList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Book> books = new ArrayList<>();
 
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Empty_book\"  as sb\n" +
+                " left join  \"Empty_book\" as b on b.scan_id = sb.book_scan_id\n" +
+                "where  sb.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            books.add(readBookFromResultSet(rs));
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+        return books;
     }
 
-    private void getScanUndefinedBooksList(long scanId){}
+    public List<Book> getScanUndefinedBooksList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Book> books = new ArrayList<>();
+
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Undefined_Book\"  as sb\n" +
+                " left join  \"Undefined_book\" as b on b.scan_id = sb.book_scan_id\n" +
+                "where  sb.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            books.add(readBookFromResultSet(rs));
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+        return books;
+    }
 
     private void getScanPathList(long scanId){}
 
