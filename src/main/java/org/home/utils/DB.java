@@ -622,11 +622,77 @@ public class DB {
         return books;
     }
 
-    private void getScanPathList(long scanId){}
+    public List<Path> getScanPathList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Path> pathList = new ArrayList<>();
 
-    private void getScanBadFilesList(long scanId){}
+        if(openCloseSession){connect();}
 
-    private void getScanIgnoredFilesList(long scanId){}
+        String sql = "select * from \"Scan_Scanned_path_list\" as plc\n" +
+                " left join  \"Scanned_path_list\" as pl on plc.file_path_id = pl.id\n" +
+                "where  plc.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            Path p =  Paths.get(rs.getString("file_path"));
+            pathList.add(p);
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+
+        return pathList;
+    }
+
+    public List<Path> getScanBadFilesList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Path> pathList = new ArrayList<>();
+
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Bad_files_path_list\" as plc\n" +
+                " left join  \"Bad_files_path_list\" as pl on plc.file_path_id = pl.id\n" +
+                "where  plc.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            Path p =  Paths.get(rs.getString("file_path"));
+            pathList.add(p);
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+
+        return pathList;
+    }
+
+    public List<Path> getScanIgnoredFilesList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Path> pathList = new ArrayList<>();
+
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Ignored_path_list\" as plc\n" +
+                " left join  \"ignored_path_list\" as pl on plc.file_path_id = pl.id\n" +
+                "where  plc.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            Path p =  Paths.get(rs.getString("file_path"));
+            pathList.add(p);
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+
+        return pathList;
+    }
 
     private static String parseDbStringValue(String o){
         return (o != null)? o: "";

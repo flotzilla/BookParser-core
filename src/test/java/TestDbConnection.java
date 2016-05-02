@@ -235,7 +235,7 @@ public class TestDbConnection {
         }
     }
 
-    @Test
+//    @Test
     public void testGetScanBookList() {
         DB db = new DB();
         List<Book> scanBooksList = null;
@@ -249,7 +249,7 @@ public class TestDbConnection {
 
     }
 
-    @Test
+//    @Test
     public void testGetUndefinedBooksList() {
         DB db = new DB();
         List<Book> scanUndefinedBooksList = null;
@@ -263,13 +263,50 @@ public class TestDbConnection {
 
     }
 
-    @Test
+//    @Test
     public void testGeEmptyBooksList(){
         DB db = new DB();
         try {
             List<Book> scanEmptyBooksList = db.getScanEmptyBooksList(Long.valueOf("1461738825600"), true);
             logger.debug("Empty Books Size " + scanEmptyBooksList.size());
             scanEmptyBooksList.forEach(book -> logger.debug(book.toString()));
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
+    }
+
+    @Test
+    public void testGetScannedPathList(){
+        DB db = new DB();
+        try {
+            List<Path> scanPathList = db.getScanPathList(Long.valueOf("1462189217245"), true);
+            logger.debug("Path list size " + scanPathList.size());
+//            scanPathList.forEach(path -> logger.debug(path.toAbsolutePath().toString()));
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
+
+    }
+
+    @Test
+    public void testGetBadFilesPathList(){
+        DB db = new DB();
+        try {
+            List<Path> scanPathList = db.getScanBadFilesList(Long.valueOf("1462189217245"), true);
+            logger.debug("Bad Path list size " + scanPathList.size());
+//            scanPathList.forEach(path -> logger.debug(path.toAbsolutePath().toString()));
+        } catch (SQLException e) {
+            logger.error(Utils.printStackTrace(e).toString());
+        }
+    }
+
+    @Test
+    public void testGetIgnoredPathList(){
+        DB db = new DB();
+        try {
+            List<Path> scanPathList = db.getScanIgnoredFilesList(Long.valueOf("1462189217245"), true);
+            logger.debug("Ignored Path list size " + scanPathList.size());
+//            scanPathList.forEach(path -> logger.debug(path.toAbsolutePath().toString()));
         } catch (SQLException e) {
             logger.error(Utils.printStackTrace(e).toString());
         }
