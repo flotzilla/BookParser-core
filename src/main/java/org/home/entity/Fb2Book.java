@@ -25,6 +25,16 @@ public class Fb2Book extends Book {
         count.decrementAndGet();
         logger.trace("Counter is " + count.get());
 
+        new Fb2Book(book, false);
+
+        logger.trace("Fb2book id " + this.getId());
+        logger.trace("Created book id " + book.getId());
+    }
+
+    public Fb2Book(Book book, boolean without_id){
+        //create without counter
+        if(without_id){count.decrementAndGet();}
+
         setId(book.getId());
         setFileName(book.getFileName());
         setLocationPath(book.getLocationPath());
@@ -32,9 +42,25 @@ public class Fb2Book extends Book {
         setSize(book.getSize());
         setIs_deleted(book.is_deleted());
         setScanId(book.getScanId());
-
-        logger.trace("Fb2book id " + this.getId());
-        logger.trace("Created book id " + book.getId());
+        setTitle(book.getTitle());
+        setAuthor(book.getAuthor());
+        setNumberOfPages(book.getNumberOfPages());
+        setSubject(book.getSubject());
+        setDescription(book.getDescription());
+        setCreationDate(book.getCreationDate());
+        setModifDate(book.getModifDate());
+        setCreator(book.getCreator());
+        setProducer(book.getProducer());
+        setKeywords(book.getKeywords());
+        setLanguage(book.getLanguage());
+        setVersion(book.getVersion());
+        setHaveCover(book.isHaveCover());
+        setPreviewImageFile(book.getPreviewImageFile());
+        setIsbn(book.getIsbn());
+        setPublisherName(book.getPublisherName());
+        setPublisherBookName(book.getPublisherBookName());
+        setPublisherCity(book.getPublisherCity());
+        setPublishYear(book.getPublishYear());
     }
 
     public Fb2Book() {

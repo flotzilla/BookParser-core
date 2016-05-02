@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -239,7 +240,7 @@ public class DB {
                 scanResults.setScan_id(scan_id);
                 scanResults.setFoundPdfBooksCount(resultSet.getInt("pdf_books_count"));
                 scanResults.setFoundfb2BooksCount(resultSet.getInt("fb2_books_count"));
-                scanResults.setFoundEpubBooksCount(resultSet.getInt("epub_books)count"));
+                scanResults.setFoundEpubBooksCount(resultSet.getInt("epub_books_count"));
                 scanResults.setFoundDjvuBooksCount(resultSet.getInt("djvu_books_count"));
                 scanResults.setFoundTxtBooksCount(resultSet.getInt("txt_books_count"));
                 scanResults.setFoundDocBooksCount(resultSet.getInt("doc_books_count"));
@@ -508,17 +509,118 @@ public class DB {
         statement.executeBatch();
     }
 
-    private List<Book> getScanBooksList(long scanId) throws SQLException {
+    private Book readBookFromResultSet(ResultSet rs) throws SQLException {
+        Book b = new Book(rs.getInt("id"));
+        b.setScanId(parseDbStringValue(rs.getString("scan_id")));
+        b.setFileName(parseDbStringValue(rs.getString("file_name")));
+        b.setLocationPath(Paths.get(parseDbStringValue(rs.getString("location_path"))));
+        b.setExtension(parseDbStringValue(rs.getString("ext")));
+        b.setSize(parseDbStringValue(rs.getString("file_size")));
+        b.setTitle(parseDbStringValue(rs.getString("title")));
+        b.setAuthor(parseDbStringValue(rs.getString("author")));
+        b.setNumberOfPages(rs.getInt("number_of_pages"));
+        b.setSubject(parseDbStringValue(rs.getString("subject")));
+        b.setDescription(parseDbStringValue(rs.getString("description")));
+        b.setCreationDate(parseDbStringValue(rs.getString("creation_date")));
+        b.setModifDate(parseDbStringValue(rs.getString("modification_date")));
+        b.setCreator(parseDbStringValue(rs.getString("creator")));
+        b.setProducer(parseDbStringValue(rs.getString("producer")));
+        b.setKeywords(parseDbStringValue(rs.getString("keywords")));
+        b.setLanguage(parseDbStringValue(rs.getString("lang")));
+        b.setVersion(parseDbStringValue(rs.getString("version")));
+        b.setHaveCover(rs.getBoolean("have_cover"));
+        b.setPreviewImageFile(parseDbStringValue(rs.getString("preview_image_file")));
+        b.setIsbn(parseDbStringValue(rs.getString("isbn")));
+        b.setPublisherName(parseDbStringValue(rs.getString("publisher_name")));
+        b.setPublisherBookName(parseDbStringValue(rs.getString("publisher_book_name")));
+        b.setPublisherCity(parseDbStringValue(rs.getString("publisher_city")));
+        b.setPublishYear(parseDbStringValue(rs.getString("publish_year")));
+        b.setIs_deleted(rs.getBoolean("is_deleted"));
+        if(rs.getString("ext").equals("fb2")){
+            Fb2Book fb2Book = new Fb2Book(b, true);
+            fb2Book.setEncoding(parseDbStringValue(rs.getString("encoding")));
+            fb2Book.setAnnotation(parseDbStringValue(rs.getString("annotaion")));
+            fb2Book.setGenre(parseDbStringValue(rs.getString("genre")));
+            fb2Book.setTranslator(parseDbStringValue(rs.getString("translator")));
+            fb2Book.setSrcLang(parseDbStringValue(rs.getString("src_lang")));
+            fb2Book.setGenre(parseDbStringValue(rs.getString("src_genre")));
+            fb2Book.setSrcGenre(parseDbStringValue(rs.getString("src_genre")));
+            fb2Book.setSrcAuthor(parseDbStringValue(rs.getString("src_author")));
+            fb2Book.setSrcTitle(parseDbStringValue(rs.getString("src_title")));
+            fb2Book.setSrcAnnotation(parseDbStringValue(rs.getString("src_annotation")));
+            fb2Book.setSrcKeywords(parseDbStringValue(rs.getString("src_keywords")));
+            fb2Book.setSrcDate(parseDbStringValue(rs.getString("src_date")));
+            return fb2Book;
+        }else{
+            return b;
+        }
+    }
+
+    public List<Book> getScanBooksList(long scanId, boolean openCloseSession) throws SQLException {
         List<Book> books = new ArrayList<>();
-//
-//        String sql = "SELECT From ";
-//        PreparedStatement statement = connection.prepareStatement(sql);
+
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Book\"  as sb\n" +
+                " left join  \"Book\" as b on b.scan_id = sb.book_scan_id\n" +
+                "where  sb.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+           books.add(readBookFromResultSet(rs));
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
         return books;
     }
 
-    private void getScanEmptyBooksList(long scanId){}
+    public List<Book> getScanEmptyBooksList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Book> books = new ArrayList<>();
 
-    private void getScanUndefinedBooksList(long scanId){}
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Empty_book\"  as sb\n" +
+                " left join  \"Empty_book\" as b on b.scan_id = sb.book_scan_id\n" +
+                "where  sb.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            books.add(readBookFromResultSet(rs));
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+        return books;
+    }
+
+    public List<Book> getScanUndefinedBooksList(long scanId, boolean openCloseSession) throws SQLException {
+        List<Book> books = new ArrayList<>();
+
+        if(openCloseSession){connect();}
+
+        String sql = "select * from \"Scan_Undefined_Book\"  as sb\n" +
+                " left join  \"Undefined_book\" as b on b.scan_id = sb.book_scan_id\n" +
+                "where  sb.scan_id = ?";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setLong(1, scanId);
+        ResultSet rs = st.executeQuery();
+
+        while (rs.next()){
+            books.add(readBookFromResultSet(rs));
+        }
+
+        st.close();
+
+        if(openCloseSession){disconnect();}
+        return books;
+    }
 
     private void getScanPathList(long scanId){}
 
@@ -526,5 +628,7 @@ public class DB {
 
     private void getScanIgnoredFilesList(long scanId){}
 
-
+    private static String parseDbStringValue(String o){
+        return (o != null)? o: "";
+    }
 }
