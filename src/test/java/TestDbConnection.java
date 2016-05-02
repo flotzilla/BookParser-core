@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -239,7 +240,7 @@ public class TestDbConnection {
         }
     }
 
-    @Test
+//    @Test
     public void testGetScanResults(){
         DB db = new DB();
         try {
@@ -248,5 +249,13 @@ public class TestDbConnection {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    @Test
+    public void testGetScanBookList() throws ParseException, SQLException {
+        DB db = new DB();
+        List<Book> scanBooksList = db.getScanBooksList(Long.valueOf("1461738825600"), true);
+        logger.debug("Books size" + scanBooksList.size());
+        scanBooksList.forEach(book -> logger.debug(book.toString()));
     }
 }

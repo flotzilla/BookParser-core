@@ -49,6 +49,10 @@ public class Book {
         logger.trace("New book was created. Id: " + id);
     }
 
+    public Book(int id){
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
