@@ -10,10 +10,13 @@ public class TestDevice {
     @Test
     public void testDevicee(){
         Device device = new Device();
+        device.init();
         logger.debug(device.getHomeDir());
         logger.debug(device.getOsArch());
         logger.debug(device.getOsName());
         logger.debug(device.getOsVersion());
         logger.debug(device.getUserName());
+
+        logger.debug(device.toString());
     }
 }
