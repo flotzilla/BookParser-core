@@ -19,7 +19,7 @@
     </logger>
 
     <logger name="org.junit">
-        <level value="TRACE" />
+        <level value="DEBUG" />
     </logger>
 
 

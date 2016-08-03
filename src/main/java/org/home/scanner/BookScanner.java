@@ -3,6 +3,7 @@ package org.home.scanner;
 import org.dom4j.DocumentException;
 import org.home.entity.Book;
 import org.home.entity.Fb2Book;
+import org.home.exceptions.BadInputListDataException;
 import org.home.parsers.EpubParser;
 import org.home.parsers.FB2Parser;
 import org.home.parsers.PDFParser;
@@ -37,7 +38,15 @@ public class BookScanner {
         bookPathList = new ArrayList<>();
     }
 
-    public ScanResults scan(){
+    public ScanResults scan() throws BadInputListDataException {
+        if(!isIncludeListOk()){
+            throw new BadInputListDataException("Input List is not ready");
+        }
+
+        if(!isExcludeListOk()){
+            excludedPathList = new ArrayList<>();
+        }
+
         ScanResults scanResults = new ScanResults(
                 new Timestamp(new Date().getTime()).getTime()
         );
@@ -45,6 +54,14 @@ public class BookScanner {
         parseBooks(scanResults);
 
         return scanResults;
+    }
+
+    private boolean isIncludeListOk() {
+        return this.includedPathList != null && this.includedPathList.size() > 0;
+    }
+
+    private boolean isExcludeListOk() {
+        return this.excludedPathList != null && this.excludedPathList.size() > 0;
     }
 
     private void startScan(ScanResults scanResults){

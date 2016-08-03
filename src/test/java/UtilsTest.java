@@ -17,7 +17,7 @@ public class UtilsTest {
     @Test
     public void testCalculoateSize(){
         //5.3 mb
-        Path file = Paths.get("/media/MegaHard/Book/Java_/spring-framework-reference.4.2.4.pdf");
+        Path file = Paths.get("testDir/Metamorphosis-jackson.epub");
         try {
             String size = FileUtils.calculateFileSize(file);
             logger.debug("Method File size is " + size);
