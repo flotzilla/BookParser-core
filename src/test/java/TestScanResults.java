@@ -137,11 +137,11 @@ public class TestScanResults {
         BookScanner emptyExlBookScan = new BookScanner(includedPathList, Collections.emptyList());
         try {
             ScanResults scanResults = bookScanner.scan();
-            assertEquals(7, scanResults.getFoundcbrBooksCount());
+            assertEquals(7, scanResults.getBookList().size());
             logger.debug("Scanned " + scanResults.getBookList().size() + " books");
 
             ScanResults scan = emptyExlBookScan.scan();
-            assertEquals(7, scan.getFoundcbrBooksCount());
+            assertEquals(7, scan.getBookList().size());
             logger.debug("Scanned " + scan.getBookList().size() + " books");
 
         } catch (BadInputListDataException e) {
